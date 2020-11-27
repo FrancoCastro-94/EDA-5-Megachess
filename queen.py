@@ -2,13 +2,29 @@ import rook as r
 import bishop as b
 
 
-class blackQueen(r.blackRook, b.blackBishop):
+class BlackQueen(r.BlackRook, b.BlackBishop):
     def __init__(self, row, col):
-        r.blackRook.__init__(self, row, col)
-        b.blackBishop.__init__(self, row, col)
+        r.BlackRook.__init__(self, row, col)
+        b.BlackBishop.__init__(self, row, col)
         self.row = row
         self.col = col
-    def queenAttack(self, tablero):
-        possibleAttack = r.blackRook.attac(tablero, self.row, self.col)
-        possibleAttack.append(b.blackBishop.attack(tablero, self.row, self.col))
-        return possibleAttack
+
+
+class WhiteQueen(r.WhiteRook, b.WhiteBishop):
+    def __init__(self, row, col):
+        r.WhiteRook.__init__(self, row, col)
+        b.WhiteBishop.__init__(self, row, col)
+        self.row = row
+        self.col = col
+
+    def queen_attack(self, board):
+        bishop = self.white_bishop_attack(board)
+        rook = self.attack_rook(board)
+        possibleAttack = []
+        if bishop:
+            possibleAttack.append(bishop)
+        if rook:
+            possibleAttack.append(rook)
+        if possibleAttack:
+            return possibleAttack
+        return False

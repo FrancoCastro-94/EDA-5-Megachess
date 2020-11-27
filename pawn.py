@@ -1,61 +1,112 @@
-def blackRightkAttack(tablero, row, col):
+def white_right_attack(board, row, col):
     try:
-        if tablero[row + 1][col + 1].isupper():
-            return [True, tablero[row + 1][col + 1], row, col, row + 1, col + 1]
+        if board[row - 1][col + 1].islower():
+            return [board[row - 1][col + 1], row, col, row - 1, col + 1]
     except:
-        return [False]
+        return False
 
 
-def blackLeftAttack(tablero, row, col):
+def white_left_attack(board, row, col):
     try:
-        if tablero[row + 1][col - 1].isupper():
-            return [True, tablero[row + 1][col - 1], row, col, row + 1, col - 1]
+        if board[row - 1][col - 1].islower():
+            return [board[row - 1][col - 1], row, col, row - 1, col - 1]
     except:
-        return [False]
+        return False
 
 
-def black_move_two(tablero, row, col, is_first_move):
+def white_move_two(board, row, col, is_first_move):
     if is_first_move:
-        if tablero[row + 1][col] == ' ' and tablero[row + 2][col] == ' ':
-            return [True, row, col, row + 2, col]
-    return [False]
+        if board[row - 1][col] == ' ' and board[row - 2][col] == ' ':
+            return [row, col, row - 2, col]
+    return False
 
 
-def black_move(tablero, row, col):
-    if tablero[row + 1][col] == ' ':
-        return [True, row, col, row + 1, col]
-    return [False]
+def white_move(board, row, col):
+    if board[row - 1][col] == ' ':
+        return [row, col, row - 1, col]
+    else:
+        return False
 
 
-class blackPawn:
+class WhitePawn:
 
     def __init__(self, row, col):
         self.col = col
         self.row = row
-        self.isFirstMove = True
 
-    def attack(self, tablero):
-        left = blackLeftAttack(tablero, self.row, self.col)
-        right = blackRightkAttack(tablero, self.row, self.col)
+    def white_pawn_attack(self, board):
+        left = white_left_attack(board, self.row, self.col)
+        right = white_right_attack(board, self.row, self.col)
         possibleAttack = []
-        if left[0]:
-            possibleAttack[0] = True
+        if left:
             possibleAttack.append(left)
-        if right[0]:
-            possibleAttack[0] = True
+        if right:
             possibleAttack.append(right)
-        if possibleAttack.isempty():
-            return [False]
-        else:
+        if possibleAttack:
             return possibleAttack
-
-    def move_two(self, tablero):
-        if self.isFirstMove:
-            self.is_first_move = False
-            return black_move_two(tablero, self.row, self.col, self.isFirstMove)
         else:
-            return [False]
+            return False
 
-    def move(self, tablero):
-        self.is_first_move = False
-        return black_move(tablero, self.row, self.col)
+    def move_two(self, board, is_first_move):
+        return white_move_two(board, self.row, self.col, is_first_move)
+
+    def move(self, board):
+        return white_move(board, self.row, self.col)
+
+
+# --------------------------------------------------------------------
+
+def black_right_attack(board, row, col):
+    try:
+        if board[row + 1][col + 1].isupper():
+            return [board[row + 1][col + 1], row, col, row + 1, col + 1]
+    except:
+        return False
+
+
+def black_left_attack(board, row, col):
+    try:
+        if board[row + 1][col - 1].isupper():
+            return [board[row + 1][col - 1], row, col, row + 1, col - 1]
+    except:
+        return False
+
+
+def black_move_two(board, row, col, is_first_move):
+    if is_first_move:
+        if board[row + 1][col] == ' ' and board[row + 2][col] == ' ':
+            return [row, col, row + 2, col]
+    return False
+
+
+def black_move(board, row, col):
+    if board[row + 1][col] == ' ':
+        return [row, col, row + 1, col]
+    else:
+        return False
+
+
+class BlackPawn:
+
+    def __init__(self, row, col):
+        self.col = col
+        self.row = row
+
+    def black_pawn_attack(self, board):
+        left = black_left_attack(board, self.row, self.col)
+        right = black_right_attack(board, self.row, self.col)
+        possibleAttack = []
+        if left:
+            possibleAttack.append(left)
+        if right:
+            possibleAttack.append(right)
+        if possibleAttack:
+            return possibleAttack
+        else:
+            return False
+
+    def move_two(self, board, is_first_move):
+        return black_move_two(board, self.row, self.col, is_first_move)
+
+    def move(self, board):
+        return black_move(board, self.row, self.col)

@@ -3,7 +3,6 @@ import json
 import websockets
 import play_game
 
-
 auth_token = '0d26fca5-bf53-4fd4-9ec5-c575fe16e76f'
 
 
@@ -16,7 +15,6 @@ async def send(websocket, action, data):
     )
     print(message)
     await websocket.send(message)
-
 
 
 async def start(auth_token):
@@ -34,7 +32,7 @@ async def play(websocket):
             print(f"< {response}")
             data = json.loads(response)
 
-            if data['event'] == 'update_user_list':   # data['data']['username']
+            if data['event'] == 'update_user_list':
                 newData = {"username": "Franco", "message": "do you want to play?"}
                 await send(websocket, 'challenge', newData)
 
@@ -48,7 +46,10 @@ async def play(websocket):
                     print(f"< {response}")
 
             if data['event'] == 'your_turn':
-                my_turn = play_game.play_black(data['data'])
+                if data['data']['actual_turn'] == 'white':
+                    my_turn = play_game.play_white(data['data']['board'])
+                if data['data']['actual_turn'] == 'black':
+                    my_turn = play_game.play_black(data['data']['board'])
                 await send(websocket, 'move',
                            {
                                'board_id': data['data']['board_id'],
@@ -66,7 +67,7 @@ async def play(websocket):
 
 
 if __name__ == '__main__':
-   try:
-       asyncio.get_event_loop().run_until_complete(start(auth_token))
-   except:
-       print('Algo ocurrio, corra de nuevo el programa')
+    try:
+        asyncio.get_event_loop().run_until_complete(start(auth_token))
+    except:
+        print('Algo ocurrio, corra de nuevo el programa')

@@ -1,7 +1,7 @@
-from datetime import time
 from random import randint
 import numpy as np
-import black_service as black
+from turn import WhiteTurn
+from turn import BlackTurn
 
 
 def update_board(data_board):
@@ -11,21 +11,54 @@ def update_board(data_board):
     return ToBoard
 
 
-def forced_move():
-    forced_move = [randint(0, 15), randint(0, 15), randint(0, 15), randint(0, 15)]
-    return forced_move
-
-
-def play_black(data):
-    board = update_board(data['board'])
-    print(board)
-    time.sleep(8)
-    pawns = black.update_black_pawns(board)
-    attack = black.attack_pawns(pawns, board)
-    if attack[0]:
-        return [attack[2], attack[3], attack[4], attack[5]]
+def move_pawns(pawns, new_board):
     try:
-        move = black.move_pawns(pawns, board)
-        return [move[1], move[2], move[3], move[4]]
+        for p in pawns:
+            move = p.move(new_board)
+            if move:
+                return move
+    except:
+        return False
+
+
+def possible_attack(attacks):
+    try:
+        for a in attacks:
+            if a:
+                print(a)
+                return a[0]
+    except:
+        return False
+
+
+def forced_move():
+    move = [randint(0, 15), randint(0, 15), randint(0, 15), randint(0, 15)]
+    return move
+
+
+def play_black(data_board):
+    turn = BlackTurn(update_board(data_board))
+    turn.update()
+    attack = possible_attack(turn.possible_attacks())
+    print(turn.board)
+    if attack:
+        return [attack[1], attack[2], attack[3], attack[4]]
+    try:
+        move = move_pawns(turn.pawns, turn.board)
+        return [move[0], move[1], move[2], move[3]]
+    except:
+        return forced_move()
+
+
+def play_white(data_board):
+    turn = WhiteTurn(update_board(data_board))
+    turn.update()
+    attack = possible_attack(turn.possible_attacks())
+    print(turn.board)
+    if attack:
+        return [attack[1], attack[2], attack[3], attack[4]]
+    try:
+        move = move_pawns(turn.pawns, turn.board)
+        return [move[0], move[1], move[2], move[3]]
     except:
         return forced_move()
