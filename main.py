@@ -1,7 +1,7 @@
 import asyncio
 import json
 import websockets
-import play_game
+import service
 
 auth_token = '0d26fca5-bf53-4fd4-9ec5-c575fe16e76f'
 
@@ -47,9 +47,9 @@ async def play(websocket):
 
             if data['event'] == 'your_turn':
                 if data['data']['actual_turn'] == 'white':
-                    my_turn = play_game.play_white(data['data']['board'])
+                    my_turn = service.play_white(data['data']['board'])
                 if data['data']['actual_turn'] == 'black':
-                    my_turn = play_game.play_black(data['data']['board'])
+                    my_turn = service.play_black(data['data']['board'])
                 await send(websocket, 'move',
                            {
                                'board_id': data['data']['board_id'],
