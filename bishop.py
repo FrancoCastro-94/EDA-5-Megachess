@@ -1,44 +1,36 @@
-def black_forward_right(board, row, col):
+def black_forward_right(attacks, board, row, col):
     for i in range(1, 15):
-        if row + i > 15 or col + i > 15:
-            return False
-        if board[row + i][col + i].islower():
+        if row + i > 15 or col + i > 15 or board[row + i][col + i].islower():
             return False
         if board[row + i][col + i].isupper():
-            return [board[row + i][col + i], row, col, row + i, col + i]
+            attacks.append([board[row + i][col + i], row, col, row + i, col + i])
     return False
 
 
-def black_forward_left(board, row, col):
+def black_forward_left(attacks, board, row, col):
     for i in range(1, 15):
-        if row + i > 15 or col - i < 0:
-            return False
-        if board[row + i][col - i].islower():
+        if row + i > 15 or col - i < 0 or board[row + i][col - i].islower():
             return False
         if board[row + i][col - i].isupper():
-            return [board[row + i][col - i], row, col, row + i, col - i]
+            attacks.append([board[row + i][col - i], row, col, row + i, col - i])
     return False
 
 
-def black_back_left(board, row, col):
+def black_back_left(attacks, board, row, col):
     for i in range(1, 15):
-        if row - i < 0 or col - i < 0:
-            return False
-        if board[row - i][col - i].islower():
+        if row - i < 0 or col - i < 0 or board[row - i][col - i].islower():
             return False
         if board[row - i][col - i].isupper():
-            return [board[row - i][col - i], row, col, row - i, col - i]
+            attacks.append([board[row - i][col - i], row, col, row - i, col - i])
     return False
 
 
-def black_back_right(board, row, col):
+def black_back_right(attacks, board, row, col):
     for i in range(1, 15):
-        if row - i < 0 or col + i > 15:
-            return False
-        if board[row - i][col + i].islower():
+        if row - i < 0 or col + i > 15 or board[row - i][col + i].islower():
             return False
         if board[row - i][col + i].isupper():
-            return [board[row - i][col + i], row, col, row - i, col + i]
+            attacks.append([board[row - i][col + i], row, col, row - i, col + i])
     return False
 
 
@@ -69,48 +61,40 @@ class BlackBishop:
 
 # ----------------------------------------WHITE-------------------------------- #
 
-def white_back_right(board, row, col):
+def white_back_right(attacks, board, row, col):
     for i in range(1, 15):
-        if row + i > 15 or col + i > 15:
-            return False
-        if board[row + i][col + i].isupper():
+        if row + i > 15 or col + i > 15 or board[row + i][col + i].isupper():
             return False
         if board[row + i][col + i].islower():
-            return [board[row + i][col + i], row, col, row + i, col + i]
-    return False
+            attacks.append([board[row + i][col + i], row, col, row + i, col + i])
+            return
 
 
-def white_back_left(board, row, col):
+def white_back_left(attacks, board, row, col):
     for i in range(1, 15):
-        if row + i > 15 or col - i < 0:
-            return False
-        if board[row + i][col - i].isupper():
+        if row + i > 15 or col - i < 0 or board[row + i][col - i].isupper():
             return False
         if board[row + i][col - i].islower():
-            return [board[row + i][col - i], row, col, row + i, col - i]
-    return False
+            attacks.append([board[row + i][col - i], row, col, row + i, col - i])
+            return
 
 
-def white_forward_left(board, row, col):
+def white_forward_left(attacks, board, row, col):
     for i in range(1, 15):
-        if row - i < 0 or col - i < 0:
-            return False
-        if board[row - i][col - i].isupper():
+        if row - i < 0 or col - i < 0 or board[row - i][col - i].isupper():
             return False
         if board[row - i][col - i].islower():
-            return [board[row - i][col - i], row, col, row - i, col - i]
-    return False
+            attacks.append([board[row - i][col - i], row, col, row - i, col - i])
+            return
 
 
-def white_forward_right(board, row, col):
+def white_forward_right(attacks, board, row, col):
     for i in range(1, 15):
-        if row - i < 0 or col + i > 15:
-            return False
-        if board[row - i][col + i].isupper():
+        if row - i < 0 or col + i > 15 or board[row - i][col + i].isupper():
             return False
         if board[row - i][col + i].islower():
-            return [board[row - i][col + i], row, col, row - i, col + i]
-    return False
+            attacks.append([board[row - i][col + i], row, col, row - i, col + i])
+            return
 
 
 class WhiteBishop:
@@ -120,19 +104,11 @@ class WhiteBishop:
         self.col = col
 
     def white_bishop_attack(self, board):
-        forward_right = white_forward_right(board, self.row, self.col)
-        forward_left = white_forward_left(board, self.row, self.col)
-        back_right = white_back_right(board, self.row, self.col)
-        back_left = white_back_left(board, self.row, self.col)
-        possibleAttack = []
-        if forward_right:
-            possibleAttack.append(forward_right)
-        if forward_left:
-            possibleAttack.append(forward_left)
-        if back_right:
-            possibleAttack.append(back_right)
-        if back_left:
-            possibleAttack.append(back_left)
-        if possibleAttack:
-            return possibleAttack
+        attacks = []
+        white_forward_right(attacks, board, self.row, self.col)
+        white_forward_left(attacks, board, self.row, self.col)
+        white_back_right(attacks, board, self.row, self.col)
+        white_back_left(attacks, board, self.row, self.col)
+        if attacks:
+            return attacks
         return False
