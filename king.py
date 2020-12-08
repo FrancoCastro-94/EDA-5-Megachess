@@ -1,200 +1,117 @@
-def black_one(board, row, col):
-    if row - 1 < 0:
-        return False
-    if board[row - 1][col].isupper():
-        return [board[row - 1][col], row, col, row - 1, col]
-    return False
+from pieces.piece import Piece
 
 
-def black_two(board, row, col):
-    if row - 1 < 0 or col + 1 > 15:
-        return False
-    if board[row - 1][col + 1].isupper():
-        return [board[row - 1][col + 1], row, col, row - 1, col + 1]
-    return False
+def black_forward_attack(attacks, board, row, col):
+    if row + 1 <= 15:
+        if board[row + 1][col].isupper():
+            attacks.append([board[row + 1][col], row, col, row + 1, col])
+        if col - 1 >= 0 and board[row + 1][col - 1].isupper():
+            attacks.append([board[row + 1][col - 1], row, col, row + 1, col - 1])
+        if col + 1 <= 15 and board[row + 1][col + 1].isupper():
+            attacks.append([board[row + 1][col + 1], row, col, row + 1, col + 1])
+    return attacks
 
 
-def black_three(board, row, col):
-    if col + 1 > 15:
-        return False
-    if board[row][col + 1].isupper():
-        return [board[row][col + 1], row, col, row, col + 1]
-    return False
+def black_back_attack(attacks, board, row, col):
+    if row - 1 >= 0:
+        if board[row - 1][col].isupper():
+            attacks.append([board[row - 1][col], row, col, row - 1, col])
+        if col - 1 >= 0 and board[row - 1][col - 1].isupper():
+            attacks.append([board[row - 1][col - 1], row, col, row - 1, col - 1])
+        if col + 1 <= 15 and board[row - 1][col + 1].isupper():
+            attacks.append([board[row - 1][col + 1], row, col, row - 1, col + 1])
+    return attacks
 
 
-def black_four(board, row, col):
-    if row + 1 > 15 or col + 1 > 15:
-        return False
-    if board[row + 1][col + 1].isupper():
-        return [board[row + 1][col + 1], row, col, row + 1, col + 1]
-    return False
+def black_sides_attacks(attacks, board, row, col):
+    if col - 1 >= 0 and board[row][col - 1].isupper():
+        attacks.append([board[row][col - 1], row, col, row, col - 1])
+    if col + 1 <= 15 and board[row][col + 1].isupper():
+        attacks.append([board[row][col + 1], row, col, row, col + 1])
+    return
 
 
-def black_five(board, row, col):
-    if row + 1 > 15:
-        return False
-    if board[row + 1][col].isupper():
-        return [board[row + 1][col], row, col, row + 1, col]
-    return False
+def black_move(board, row, col):
+    moves = list()
+    if col - 1 >= 0 and board[row][col - 1] == ' ':
+        moves.append([row, col, row, col - 1])
+    if col + 1 <= 15 and board[row][col + 1] == ' ':
+        moves.append([row, col, row, col + 1])
+    if row + 1 <= 15:
+        if board[row + 1][col] == ' ':
+            moves.append([row, col, row + 1, col])
+        if col - 1 >= 0 and board[row + 1][col - 1] == ' ':
+            moves.append([row, col, row + 1, col - 1])
+        if col + 1 <= 15 and board[row + 1][col + 1] == ' ':
+            moves.append([row, col, row + 1, col + 1])
+    if row - 1 >= 0:
+        if board[row - 1][col] == ' ':
+            moves.append([row, col, row - 1, col])
+        if col - 1 >= 0 and board[row - 1][col - 1] == ' ':
+            moves.append([row, col, row - 1, col - 1])
+        if col + 1 <= 15 and board[row - 1][col + 1] == ' ':
+            moves.append([row, col, row - 1, col + 1])
+    return moves
 
 
-def black_six(board, row, col):
-    if row + 1 > 15 or col - 1 < 0:
-        return False
-    if board[row + 1][col - 1].isupper():
-        return [board[row + 1][col - 1], row, col, row + 1, col - 1]
-    return False
-
-
-def black_seven(board, row, col):
-    if col - 1 < 0:
-        return False
-    if board[row][col - 1].isupper():
-        return [board[row][col - 1], row, col, row, col - 1]
-    return False
-
-
-def black_eight(board, row, col):
-    if row - 1 < 0 or col - 1 < 0:
-        return False
-    if board[row - 1][col - 1].isupper():
-        return [board[row - 1][col - 1], row, col, row - 1, col - 1]
-    return False
-
-
-class BlackKing:
+class BlackKing(Piece):
     def __init__(self, row, col):
-        self.row = row
-        self.col = col
+        Piece.__init__(self, row, col)
 
     def black_king_attack(self, board):
-        attacks = []
-        one = black_one(board, self.row, self.col)
-        two = black_two(board, self.row, self.col)
-        three = black_three(board, self.row, self.col)
-        four = black_four(board, self.row, self.col)
-        five = black_five(board, self.row, self.col)
-        six = black_six(board, self.row, self.col)
-        seven = black_seven(board, self.row, self.col)
-        eight = black_eight(board, self.row, self.col)
-        if one:
-            attacks.append(one)
-        if two:
-            attacks.append(two)
-        if three:
-            attacks.append(three)
-        if four:
-            attacks.append(four)
-        if five:
-            attacks.append(five)
-        if six:
-            attacks.append(six)
-        if seven:
-            attacks.append(seven)
-        if eight:
-            attacks.append(eight)
+        attacks = list()
+        black_forward_attack(attacks, board, self.row, self.col)
+        black_back_attack(attacks, board, self.row, self.col)
+        black_sides_attacks(attacks, board, self.row, self.col)
         if attacks:
             return attacks
         return False
 
+    def move(self, board):
+        king_move = black_move(board, self.row, self.col)
+        return king_move[0]
+
 
 # -------------------------------------------------- WHITE KING ---------------------------------------------- #
-
-def white_one(board, row, col):
-    if row - 1 < 0:
-        return False
-    if board[row - 1][col].islower():
-        return [board[row - 1][col], row, col, row - 1, col]
-    return False
-
-
-def white_two(board, row, col):
-    if row - 1 < 0 or col + 1 > 15:
-        return False
-    if board[row - 1][col + 1].islower():
-        return [board[row - 1][col + 1], row, col, row - 1, col + 1]
-    return False
+def white_back_attack(attacks, board, row, col):
+    if row + 1 <= 15:
+        if board[row + 1][col].islower():
+            attacks.append([board[row + 1][col], row, col, row + 1, col])
+        if col - 1 >= 0 and board[row + 1][col - 1].islower():
+            attacks.append([board[row + 1][col - 1], row, col, row + 1, col - 1])
+        if col + 1 <= 15 and board[row + 1][col + 1].islower():
+            attacks.append([board[row + 1][col + 1], row, col, row + 1, col + 1])
+    return attacks
 
 
-def white_three(board, row, col):
-    if col + 1 > 15:
-        return False
-    if board[row][col + 1].islower():
-        return [board[row][col + 1], row, col, row, col + 1]
-    return False
+def white_forward_attack(attacks, board, row, col):
+    if row - 1 >= 0:
+        if board[row - 1][col].islower():
+            attacks.append([board[row - 1][col], row, col, row - 1, col])
+        if col - 1 >= 0 and board[row - 1][col - 1].islower():
+            attacks.append([board[row - 1][col - 1], row, col, row - 1, col - 1])
+        if col + 1 <= 15 and board[row - 1][col + 1].islower():
+            attacks.append([board[row - 1][col + 1], row, col, row - 1, col + 1])
+    return attacks
 
 
-def white_four(board, row, col):
-    if row + 1 > 15 or col + 1 > 15:
-        return False
-    if board[row + 1][col + 1].islower():
-        return [board[row + 1][col + 1], row, col, row + 1, col + 1]
-    return False
+def white_sides_attacks(attacks, board, row, col):
+    if col - 1 >= 0 and board[row][col - 1].islower():
+        attacks.append([board[row][col - 1], row, col, row, col - 1])
+    if col + 1 <= 15 and board[row][col + 1].islower():
+        attacks.append([board[row][col + 1], row, col, row, col + 1])
+    return
 
 
-def white_five(board, row, col):
-    if row + 1 > 15:
-        return False
-    if board[row + 1][col].islower():
-        return [board[row + 1][col], row, col, row + 1, col]
-    return False
-
-
-def white_six(board, row, col):
-    if row + 1 > 15 or col - 1 < 0:
-        return False
-    if board[row + 1][col - 1].islower():
-        return [board[row + 1][col - 1], row, col, row + 1, col - 1]
-    return False
-
-
-def white_seven(board, row, col):
-    if col - 1 < 0:
-        return False
-    if board[row][col - 1].islower():
-        return [board[row][col - 1], row, col, row, col - 1]
-    return False
-
-
-def white_eight(board, row, col):
-    if row - 1 < 0 or col - 1 < 0:
-        return False
-    if board[row - 1][col - 1].islower():
-        return [board[row - 1][col - 1], row, col, row - 1, col - 1]
-    return False
-
-
-class WhiteKing:
+class WhiteKing(Piece):
     def __init__(self, row, col):
-        self.row = row
-        self.col = col
+        Piece.__init__(self, row, col)
 
     def white_king_attack(self, board):
-        attacks = []
-        one = white_one(board, self.row, self.col)
-        two = white_two(board, self.row, self.col)
-        three = white_three(board, self.row, self.col)
-        four = white_four(board, self.row, self.col)
-        five = white_five(board, self.row, self.col)
-        six = white_six(board, self.row, self.col)
-        seven = white_seven(board, self.row, self.col)
-        eight = white_eight(board, self.row, self.col)
-        if one:
-            attacks.append(one)
-        if two:
-            attacks.append(two)
-        if three:
-            attacks.append(three)
-        if four:
-            attacks.append(four)
-        if five:
-            attacks.append(five)
-        if six:
-            attacks.append(six)
-        if seven:
-            attacks.append(seven)
-        if eight:
-            attacks.append(eight)
+        attacks = list()
+        white_forward_attack(attacks, board, self.row, self.col)
+        white_back_attack(attacks, board, self.row, self.col)
+        white_sides_attacks(attacks, board, self.row, self.col)
         if attacks:
             return attacks
         return False

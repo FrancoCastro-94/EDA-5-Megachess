@@ -1,3 +1,6 @@
+from pieces.piece import Piece
+
+
 def black_attack_forward(attacks, board, row, col):
     if row + 2 <= 15:
         if col - 1 >= 0 and board[row + 2][col - 1].isupper():
@@ -35,17 +38,12 @@ def black_attack_left(attacks, board, row, col):
 
 
 def black_move(board, row, col):
-    moves = []
+    moves = list()
     if row + 2 <= 15:
         if col - 1 >= 0 and board[row + 2][col - 1] == ' ':
             moves.append([row, col, row + 2, col - 1])
         if col + 1 <= 15 and board[row + 2][col + 1] == ' ':
             moves.append([row, col, row + 2, col + 1])
-    if row - 2 >= 0:
-        if col - 1 >= 0 and board[row - 2][col - 1] == ' ':
-            moves.append([row, col, row - 2, col - 1])
-        if col + 1 <= 15 and board[row - 2][col + 1] == ' ':
-            moves.append([row, col, row - 2, col + 1])
     if col + 2 <= 15:
         if row + 1 <= 15 and board[row + 1][col + 2] == ' ':
             moves.append([row, col, row + 1, col + 2])
@@ -56,22 +54,26 @@ def black_move(board, row, col):
             moves.append([row, col, row + 1, col - 2])
         if row - 1 >= 0 and board[row - 1][col - 2] == ' ':
             moves.append([row, col, row - 1, col - 2])
+    if row - 2 >= 0:
+        if col - 1 >= 0 and board[row - 2][col - 1] == ' ':
+            moves.append([row, col, row - 2, col - 1])
+        if col + 1 <= 15 and board[row - 2][col + 1] == ' ':
+            moves.append([row, col, row - 2, col + 1])
     return moves
 
 
-class BlackHorse:
+class BlackHorse(Piece):
     def __init__(self, row, col):
-        self.row = row
-        self.col = col
+        Piece.__init__(self, row, col)
 
-    def black_move_horse(self, board):
+    def black_horse_move(self, board):
         move = black_move(board, self.row, self.col)
         if move:
             return move
         return False
 
     def black_horse_attack(self, board):
-        attacks = []
+        attacks = list()
         black_attack_forward(attacks, board, self.row, self.col)
         black_attack_right(attacks, board, self.row, self.col)
         black_attack_back(attacks, board, self.row, self.col)
@@ -119,12 +121,7 @@ def white_attack_left(attacks, board, row, col):
 
 
 def white_move(board, row, col):
-    moves = []
-    if row + 2 <= 15:
-        if col - 1 >= 0 and board[row + 2][col - 1] == ' ':
-            moves.append([row, col, row + 2, col - 1])
-        if col + 1 <= 15 and board[row + 2][col + 1] == ' ':
-            moves.append([row, col, row + 2, col + 1])
+    moves = list()
     if row - 2 >= 0:
         if col - 1 >= 0 and board[row - 2][col - 1] == ' ':
             moves.append([row, col, row - 2, col - 1])
@@ -140,22 +137,26 @@ def white_move(board, row, col):
             moves.append([row, col, row + 1, col - 2])
         if row - 1 >= 0 and board[row - 1][col - 2] == ' ':
             moves.append([row, col, row - 1, col - 2])
+    if row + 2 <= 15:
+        if col - 1 >= 0 and board[row + 2][col - 1] == ' ':
+            moves.append([row, col, row + 2, col - 1])
+        if col + 1 <= 15 and board[row + 2][col + 1] == ' ':
+            moves.append([row, col, row + 2, col + 1])
     return moves
 
 
-class WhiteHorse:
+class WhiteHorse(Piece):
     def __init__(self, row, col):
-        self.row = row
-        self.col = col
+        Piece.__init__(self, row, col)
 
-    def white_move_horse(self, board):
+    def white_horse_move(self, board):
         move = white_move(board, self.row, self.col)
         if move:
             return move
         return False
 
     def white_horse_attack(self, board):
-        attacks = []
+        attacks = list()
         white_attack_back(attacks, board, self.row, self.col)
         white_attack_right(attacks, board, self.row, self.col)
         white_attack_forward(attacks, board, self.row, self.col)

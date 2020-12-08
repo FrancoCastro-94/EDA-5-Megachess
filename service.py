@@ -1,23 +1,43 @@
+import numpy
 from random import randint
-import numpy as np
-from turn import WhiteTurn
-from turn import BlackTurn
+from turn import WhiteTurn, BlackTurn
 
 
-def update_board(data_board):
+def to_matrix_board(data_board):
     list_board = list(data_board)
-    toArray = np.array(list_board)
-    ToBoard = toArray.reshape(16, 16)
-    return ToBoard
+    to_array = numpy.array(list_board)
+    to_matrix = to_array.reshape(16, 16)
+    return to_matrix
+
+
+def move_horse(horses):
+    for h in horses:
+        if h.move:
+            return h.move
 
 
 def move_pawns(pawns, board):
     try:
-        for p in pawns:
+        for p in reversed(pawns):
             move = p.move(board)
             if move:
                 return move
-    except:
+    except Exception as e:
+        print(e)
+        return False
+
+
+def move_pawns_black(pawns, board):
+    defenders_pawns = [10, 9, 8, 7]
+    try:
+        for p in reversed(pawns):
+            move = p.move(board)
+            if p.col in defenders_pawns:
+                continue
+            elif move:
+                return move
+    except Exception as e:
+        print(e)
         return False
 
 
@@ -25,9 +45,9 @@ def possible_attack(attacks):
     try:
         for a in attacks:
             if a:
-                print(a)
-                return a[0]
-    except:
+                return a
+    except Exception as e:
+        print(e)
         return False
 
 
@@ -37,21 +57,24 @@ def forced_move():
 
 
 def play_black(data):
-    current_board = update_board(data['board'])
+    current_board = to_matrix_board(data['board'])
     turn = BlackTurn(current_board)
     attack = possible_attack(turn.update())
+
     try:
         if attack:
             return [attack[1], attack[2], attack[3], attack[4]]
         else:
-            move = move_pawns(turn.pawns, turn.board)
+            move = move_pawns_black(turn.pawns, turn.board)
             return [move[0], move[1], move[2], move[3]]
-    except:
-        return forced_move()
+
+    except Exception as e:
+        print(e)
+    return forced_move()
 
 
 def play_white(data):
-    current_board = update_board(data['board'])
+    current_board = to_matrix_board(data['board'])
     print(current_board)
     turn = WhiteTurn(current_board)
     attack = possible_attack(turn.update())
@@ -59,7 +82,8 @@ def play_white(data):
         if attack:
             return [attack[1], attack[2], attack[3], attack[4]]
         else:
-            move = move_pawns(turn.pawns, turn.board)
+            move = move_pawns_black(turn.pawns, turn.board)
             return [move[0], move[1], move[2], move[3]]
-    except:
+    except Exception as e:
+        print(e)
         return forced_move()

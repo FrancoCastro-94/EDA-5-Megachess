@@ -1,136 +1,127 @@
-def forward_black_attack(board, row, col):
+from pieces.piece import Piece
+
+
+def rook_move(board, row, col):
+    moves = list()
     for i in range(1, 15):
-        if row + i > 15:
-            return False
-        if board[row + i][col].islower():
+        if row + i <= 15 and board[row + i][col] == ' ':
+            moves.append([row, col, row + i, col])
+    for i in range(1, 15):
+        if col + i <= 15 and board[row][col + i] == ' ':
+            moves.append([row, col, row, col + i])
+    for i in range(1, 15):
+        if row - i >= 0 and board[row - i][col] == ' ':
+            moves.append([row, col, row - i, col])
+    for i in range(1, 15):
+        if col - i >= 0 and board[row][col - i] == ' ':
+            moves.append([row, col, row, col - i])
+    return moves
+
+
+def black_forward_attack(attacks, board, row, col):
+    for i in range(1, 15):
+        if row + i > 15 or board[row + i][col].islower():
             return False
         if board[row + i][col].isupper():
-            return [board[row + i][col], row, col, row + i, col]
-    return False
+            attacks.append([board[row + i][col], row, col, row + i, col])
+            return
 
 
-def back_black_attack(board, row, col):
+def black_back_attack(attacks, board, row, col):
     for i in range(1, 15):
-        if row - i < 0:
-            return False
-        if board[row - i][col].islower():
+        if row - i < 0 or board[row - i][col].islower():
             return False
         if board[row - i][col].isupper():
-            return [board[row - i][col], row, col, row - i, col]
-    return False
+            attacks.append([board[row - i][col], row, col, row - i, col])
+            return
 
 
-def left_black_attack(board, row, col):
+def black_left_attack(attacks, board, row, col):
     for i in range(1, 15):
-        if col - i < 0:
-            return False
-        if board[row][col - i].islower():
+        if col - i < 0 or board[row][col - i].islower():
             return False
         if board[row][col - i].isupper():
-            return [board[row][col - i], row, col, row, col - i]
-    return False
+            attacks.append([board[row][col - i], row, col, row, col - i])
+            return
 
 
-def right_black_attack(board, row, col):
+def black_right_attack(attacks, board, row, col):
     for i in range(1, 15):
-        if col + i > 15:
-            return False
-        if board[row][col + i].islower():
+        if col + i > 15 or board[row][col + i].islower():
             return False
         if board[row][col + i].isupper():
-            return [board[row][col + i], row, col, row, col + i]
-    return False
+            attacks.append([board[row][col + i], row, col, row, col + i])
+            return
 
 
-class BlackRook:
+class BlackRook(Piece):
     def __init__(self, row, col):
-        self.row = row
-        self.col = col
+        Piece.__init__(self, row, col)
 
     def black_rook_attack(self, board):
-        forward = forward_black_attack(board, self.row, self.col)
-        back = back_black_attack(board, self.row, self.col)
-        left = left_black_attack(board, self.row, self.col)
-        right = right_black_attack(board, self.row, self.col)
-        possibleAttack = []
-        if forward:
-            possibleAttack.append(forward)
-        if back:
-            possibleAttack.append(back)
-        if left:
-            possibleAttack.append(left)
-        if right:
-            possibleAttack.append(right)
-        if possibleAttack:
-            return possibleAttack
+        attacks = list()
+        black_forward_attack(attacks, board, self.row, self.col)
+        black_back_attack(attacks, board, self.row, self.col)
+        black_left_attack(attacks, board, self.row, self.col)
+        black_right_attack(attacks, board, self.row, self.col)
+        if attacks:
+            return attacks
         return False
+
+    def move(self, board):
+        return rook_move(board, self.row, self.col)
 
 
 # ------------------------------------------------ WHITE ROOK ---------------------------------------------------- #
-
-def forward_white_attack(board, row, col):
+def white_forward_attack(attacks, board, row, col):
     for i in range(1, 15):
-        if row + i > 15:
-            return False
-        if board[row + i][col].isupper():
-            return False
-        if board[row + i][col].islower():
-            return [board[row + i][col], row, col, row + i, col]
-    return False
-
-
-def back_white_attack(board, row, col):
-    for i in range(1, 15):
-        if row - i < 0:
-            return False
-        if board[row - i][col].isupper():
+        if row - i < 0 or board[row - i][col].isupper():
             return False
         if board[row - i][col].islower():
-            return [board[row - i][col], row, col, row - i, col]
-    return False
+            attacks.append([board[row - i][col], row, col, row - i, col])
+            return
 
 
-def left_white_attack(board, row, col):
+def white_back_attack(attacks, board, row, col):
     for i in range(1, 15):
-        if col - i < 0:
+        if row + i > 15 or board[row + i][col].isupper():
             return False
-        if board[row][col - i].isupper():
+        if board[row + i][col].islower():
+            attacks.append([board[row + i][col], row, col, row + i, col])
+            return
+
+
+def white_left_attack(attacks, board, row, col):
+    for i in range(1, 15):
+        if col - i < 0 or board[row][col - i].isupper():
             return False
         if board[row][col - i].islower():
-            return [board[row][col - i], row, col, row, col - i]
-    return False
+            attacks.append([board[row][col - i], row, col, row, col - i])
+            return
 
 
-def right_white_attack(board, row, col):
+def white_right_attack(attacks, board, row, col):
     for i in range(1, 15):
-        if col + i > 15:
-            return False
-        if board[row][col + i].isupper():
+        if col + i > 15 or board[row][col + i].isupper():
             return False
         if board[row][col + i].islower():
-            return [board[row][col + i], row, col, row, col + i]
-    return False
+            attacks.append([board[row][col + i], row, col, row, col + i])
+            return
 
 
-class WhiteRook:
+class WhiteRook(Piece):
     def __init__(self, row, col):
-        self.row = row
-        self.col = col
+        Piece.__init__(self, row, col)
 
     def white_rook_attack(self, board):
-        forward = forward_white_attack(board, self.row, self.col)
-        back = back_white_attack(board, self.row, self.col)
-        left = left_white_attack(board, self.row, self.col)
-        right = right_white_attack(board, self.row, self.col)
-        possibleAttack = []
-        if forward:
-            possibleAttack.append(forward)
-        if back:
-            possibleAttack.append(back)
-        if left:
-            possibleAttack.append(left)
-        if right:
-            possibleAttack.append(right)
-        if possibleAttack:
-            return possibleAttack
+        attacks = list()
+        white_forward_attack(attacks, board, self.row, self.col)
+        white_back_attack(attacks, board, self.row, self.col)
+        white_left_attack(attacks, board, self.row, self.col)
+        white_right_attack(attacks, board, self.row, self.col)
+        if attacks:
+            return attacks
         return False
+
+    def move(self, board):
+        return rook_move(board, self.row, self.col)

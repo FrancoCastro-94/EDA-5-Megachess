@@ -1,9 +1,8 @@
 import asyncio
 import json
 import websockets
+from data import AUTH_TOKEN
 from service import play_black, play_white
-
-AUTH_TOKEN = '0d26fca5-bf53-4fd4-9ec5-c575fe16e76f'
 
 
 async def send(websocket, action, data):
@@ -17,8 +16,8 @@ async def send(websocket, action, data):
     await websocket.send(message)
 
 
-async def start(auth_token):
-    url = "ws://megachess.herokuapp.com/service?authtoken={}".format(auth_token)
+async def start(token):
+    url = "ws://megachess.herokuapp.com/service?authtoken={}".format(token)
     while True:
         print('connection to {}'.format(url))
         async with websockets.connect(url) as websocket:
@@ -26,7 +25,6 @@ async def start(auth_token):
 
 
 async def play(websocket):
-    global _in_game
     while True:
         try:
             response = await websocket.recv()
@@ -45,11 +43,12 @@ async def play(websocket):
                     await send(websocket, 'accept_challenge', {'board_id': data['data']['board_id']})
                     print(f"< {response}")
 
-            if data['event'] == 'your_turn':  # and id_game == data['data']['board_id']
+            if data['event'] == 'your_turn':
                 if data['data']['actual_turn'] == 'white':
                     my_turn = play_white(data['data'])
                 if data['data']['actual_turn'] == 'black':
                     my_turn = play_black(data['data'])
+
                 await send(websocket, 'move',
                            {
                                'board_id': data['data']['board_id'],
