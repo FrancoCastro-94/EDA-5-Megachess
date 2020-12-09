@@ -16,26 +16,35 @@ def move_horse(horses):
             return h.move
 
 
-def move_pawns(pawns, board):
+def move_pawns(pawns, horses, board):
     try:
         for p in reversed(pawns):
             move = p.move(board)
             if move:
                 return move
+        for h in horses:
+            move = h.move
+            if move:
+                return move[0]
     except Exception as e:
         print(e)
         return False
 
 
-def move_pawns_black(pawns, board):
+def move_pawns_black(pawns, horses, board):
     defenders_pawns = [10, 9, 8, 7]
     try:
         for p in reversed(pawns):
-            move = p.move(board)
             if p.col in defenders_pawns:
                 continue
-            elif move:
+            move = p.move(board)
+            if move:
                 return move
+        for h in horses:
+            move = h.move
+            if move:
+                return move[0]
+
     except Exception as e:
         print(e)
         return False
@@ -65,7 +74,7 @@ def play_black(data):
         if attack:
             return [attack[1], attack[2], attack[3], attack[4]]
         else:
-            move = move_pawns_black(turn.pawns, turn.board)
+            move = move_pawns_black(turn.pawns, turn.horses, turn.board)
             return [move[0], move[1], move[2], move[3]]
 
     except Exception as e:
@@ -82,7 +91,7 @@ def play_white(data):
         if attack:
             return [attack[1], attack[2], attack[3], attack[4]]
         else:
-            move = move_pawns_black(turn.pawns, turn.board)
+            move = move_pawns(turn.pawns, turn.horses, turn.board)
             return [move[0], move[1], move[2], move[3]]
     except Exception as e:
         print(e)

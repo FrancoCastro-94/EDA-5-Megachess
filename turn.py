@@ -7,7 +7,7 @@ from pieces.king import BlackKing, WhiteKing
 
 
 def black_sort_attack(attacks):
-    sorted_attacks = [False]
+    sorted_attacks = []
     for a in attacks:
         if a:
             for i in a:
@@ -49,7 +49,9 @@ class BlackTurn:
                     self.attacks.append(BlackBishop(row, col).black_bishop_attack(self.board))
                     continue
                 if self.board[row][col] == 'h':
-                    self.attacks.append(BlackHorse(row, col).black_horse_attack(self.board))
+                    h = BlackHorse(row, col)
+                    self.horses.append(h)
+                    self.attacks.append(h.black_horse_attack(self.board))
                     continue
                 if self.board[row][col] == 'p':
                     p = BlackPawn(row, col)
@@ -90,21 +92,21 @@ class BlackTurn:
 
 
 def white_sort_attack(attacks):
-    sorted_attacks = [False]
+    sorted_attacks = []
     for a in attacks:
         if a:
             for i in a:
-                if i[0] == 'k':
+                if i[0] == 'q':
                     sorted_attacks.insert(0, i)
                 if i[0] == 'r':
                     sorted_attacks.insert(1, i)
                 if i[0] == 'b':
                     sorted_attacks.insert(2, i)
-                if i[0] == 'h':
+                if i[0] == 'k':
                     sorted_attacks.insert(3, i)
-                if i[0] == 'p':
+                if i[0] == 'h':
                     sorted_attacks.insert(4, i)
-                if i[0] == 'q':
+                if i[0] == 'p' and i[3] in [5, 6]:
                     sorted_attacks.insert(5, i)
     return sorted_attacks
 
@@ -116,9 +118,9 @@ class WhiteTurn:
         self.pawns = list()
         self.horses = list()
         self.rooks_attacks = list()
-        self.horses_attacks = list()
         self.queens_attacks = list()
         self.bishops_attacks = list()
+        self.horses_attacks = list()
         self.kings_attacks = list()
         self.pawns_attacks = list()
         self.attacks = list()
@@ -130,38 +132,27 @@ class WhiteTurn:
                 if self.board[row][col] == 'P':
                     p = WhitePawn(row, col)
                     self.pawns.append(p)
-                    self.attacks.append(p.white_pawn_attack(self.board))
+                    self.pawns_attacks.append(p.white_pawn_attack(self.board))
                     continue
                 if self.board[row][col] == 'Q':
-                    self.attacks.append(WhiteQueen(row, col).white_queen_attack(self.board))
+                    self.queens_attacks.append(WhiteQueen(row, col).white_queen_attack(self.board))
                     continue
                 if self.board[row][col] == 'R':
-                    self.attacks.append(WhiteRook(row, col).white_rook_attack(self.board))
+                    self.rooks_attacks.append(WhiteRook(row, col).white_rook_attack(self.board))
                     continue
                 if self.board[row][col] == 'B':
-                    self.attacks.append(WhiteBishop(row, col).white_bishop_attack(self.board))
+                    self.bishops_attacks.append(WhiteBishop(row, col).white_bishop_attack(self.board))
                     continue
                 if self.board[row][col] == 'H':
-                    self.attacks.append(WhiteHorse(row, col).white_horse_attack(self.board))
+                    h = WhiteHorse(row, col)
+                    self.horses.append(h)
+                    self.horses_attacks.append(h.white_horse_attack(self.board))
                     continue
                 if self.board[row][col] == 'K':
-                    self.attacks.append(WhiteKing(row, col).white_king_attack(self.board))
+                    self.kings_attacks.append(WhiteKing(row, col).white_king_attack(self.board))
                     continue
+        self.attacks = self.kings_attacks + self.pawns_attacks + self.queens_attacks + \
+                       self.horses_attacks + self.bishops_attacks + self.rooks_attacks
         self.attacks = white_sort_attack(self.attacks)
         return self.attacks
 
-    def selected_attack(self):
-        if self.kings_attacks:
-            return self.kings_attacks[0]
-        if self.pawns_attacks:
-            return self.pawns_attacks[0]
-        if self.queens_attacks:
-            return self.queens_attacks[0]
-        if self.horses_attacks:
-            return self.horses_attacks[0]
-        if self.bishops_attacks:
-            return self.bishops_attacks[0]
-        if self.rooks_attacks:
-            return self.rooks_attacks[0]
-
-        return False
