@@ -1,5 +1,4 @@
-# python-ajedrez
-
+# EDA-5-megachess
 Mega-chess
 
 Usuario : Franco 
