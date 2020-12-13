@@ -1,8 +1,8 @@
 import asyncio
 import json
 import websockets
-from data import AUTH_TOKEN
-from service import play_black, play_white
+from data import AUTH_TOKEN, pretty_board
+from play import play_black, play_white
 
 
 async def send(websocket, action, data):
@@ -32,11 +32,12 @@ async def play(websocket):
             data = json.loads(response)
 
             if data['event'] == 'update_user_list':
-                newData = {"username": "Franco", "message": "do you want to play?"}
-                await send(websocket, 'challenge', newData)
+                msg = {"username": "Franco", "message": "do you want to play?"}
+                await send(websocket, 'challenge', msg)
+                continue
 
             if data['event'] == 'gameover':
-                continue
+                print(f"< {response}")
 
             if data['event'] == 'ask_challenge':
                 if data['data']['username'] == 'Franco':
@@ -44,21 +45,23 @@ async def play(websocket):
                     print(f"< {response}")
 
             if data['event'] == 'your_turn':
+                pretty_board(data['data']['board'])      # show the game on console
+                my_turn = list()
                 if data['data']['actual_turn'] == 'white':
                     my_turn = play_white(data['data'])
                 if data['data']['actual_turn'] == 'black':
                     my_turn = play_black(data['data'])
 
-                await send(websocket, 'move',
-                           {
-                               'board_id': data['data']['board_id'],
-                               'turn_token': data['data']['turn_token'],
-                               'from_row': my_turn[0],
-                               'from_col': my_turn[1],
-                               'to_row': my_turn[2],
-                               'to_col': my_turn[3],
-                           },
-                           )
+                msg = {
+                       'board_id': data['data']['board_id'],
+                       'turn_token': data['data']['turn_token'],
+                       'from_row': my_turn[0],
+                       'from_col': my_turn[1],
+                       'to_row': my_turn[2],
+                       'to_col': my_turn[3],
+                       }
+
+                await send(websocket, 'move', msg)
 
         except Exception as e:
             print('error {}'.format(str(e)))
@@ -68,5 +71,5 @@ async def play(websocket):
 if __name__ == '__main__':
     try:
         asyncio.get_event_loop().run_until_complete(start(AUTH_TOKEN))
-    except:
-        print('Algo ocurrio, corra de nuevo el programa')
+    except Exception as e:
+        print(e)
